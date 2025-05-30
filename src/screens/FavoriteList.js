@@ -5,11 +5,13 @@ import {
   StyleSheet,
   Text,
   Alert,
+  RefreshControl
 } from "react-native";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { getMovie } from "../services/Service";
 import Card from "../components/Card";
+import { ref } from "firebase/storage";
 
 const FavoriteList = ({ navigation }) => {
   const { user } = useAuth();
@@ -18,6 +20,7 @@ const FavoriteList = ({ navigation }) => {
   const [lista, setLista] = useState([]);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
 
   const getData = async () => {
     try {
@@ -55,6 +58,14 @@ const FavoriteList = ({ navigation }) => {
     getData();
   }, []);
 
+  const refrescar = () => {
+    setRefresh(true);
+
+    setTimeout(() => {
+      setRefresh(false)
+      getData()
+    }, 2000)
+  }
   return (
     <View style={styles.container}>
       {!isLoading && lista.length === 0 && (
@@ -72,6 +83,7 @@ const FavoriteList = ({ navigation }) => {
             renderItem={({ item }) => (
               <Card navigation={navigation} item={item} />
             )}
+            refreshControl={<RefreshControl onRefresh={refrescar} refreshing={refresh}/>}
           />
         </View>
       )}

@@ -12,6 +12,12 @@ const propTypes = {
 };
 
 class PlayButton extends React.PureComponent {
+  componentDidUpdate(propTypes) {
+  if (propTypes.refreshKey !== this.props.refreshKey) {
+    this.fetchTeaser();
+  }
+}
+
   constructor(props) {
     super(props);
     this.state = {
@@ -21,37 +27,44 @@ class PlayButton extends React.PureComponent {
     };
   }
 
-  async componentDidMount() {
-    const { id } = this.props;
-    const db = getFirestore();
+  fetchTeaser = async () => {
+  const { id } = this.props;
+  const db = getFirestore();
 
-    try {
-      const docRef = doc(db, 'Teaser', id.toString());
-      const docSnap = await getDoc(docRef);
+  this.setState({ isLoading: true });
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        if (data.Uri) {
-          this.setState({
-            color: 'red',
-            uri: data.Uri,
-          });
-        } else {
-          this.setState({ color: 'gray' });
-        }
+  try {
+    const docRef = doc(db, 'Teaser', id.toString());
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.Uri) {
+        this.setState({
+          color: 'red',
+          uri: data.Uri,
+        });
       } else {
-        this.setState({ color: 'gray' });
+        this.setState({ color: 'gray', uri: null });
       }
-    } catch (error) {
-      console.error('Error al consultar Firestore:', error);
-      this.setState({ color: 'gray' });
-    } finally {
-      this.setState({ isLoading: false });
+    } else {
+      this.setState({ color: 'gray', uri: null });
     }
+  } catch (error) {
+    console.error('Error al consultar Firestore:', error);
+    this.setState({ color: 'gray', uri: null });
+  } finally {
+    this.setState({ isLoading: false });
   }
+};
+
+componentDidMount() {
+  this.fetchTeaser();
+}
+
 
   handlePress = () => {
-    const { navigation, title } = this.props;
+    const { navigation, title} = this.props;
     const { uri } = this.state;
 
     if (uri) {
@@ -60,6 +73,7 @@ class PlayButton extends React.PureComponent {
         uri: uri,
       });
     } else {
+      console.log(uri)
       Alert.alert('No Disponible', 'Este teaser no está disponible.');
     }
   };

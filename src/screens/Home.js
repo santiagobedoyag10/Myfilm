@@ -1,10 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
-import { ActivityIndicator, TouchableOpacity} from "react-native";
-import { View, StyleSheet, Text, FlatList, Image, Dimensions } from "react-native";
+import { View, StyleSheet, FlatList, Dimensions, RefreshControl } from "react-native";
 import { ScrollView } from "react-native";
 import {getPopularMovies, getTopMovies, getTopTV, getAccionMovies, getComedyMovies, getFamilyMovies, getCienceFictionMovies, castMovie} from '../services/Service'
-import react from 'react'
-import Error from "../components/Error"
 import CardCarrusel from "../components/CardCarrusel";
 import List from '../components/List'
 
@@ -12,7 +9,7 @@ const { width } = Dimensions.get("screen");
 
 const Home = ({navigation}) =>{
   
-  const dimentions = Dimensions.get('screen')
+
   const flatListRef = useRef(null); 
   const [moviesImages, setMoviesImages]= useState([])
   const [popularMovies, setPopularMovies]= useState()
@@ -22,9 +19,8 @@ const Home = ({navigation}) =>{
   const [comedyMovies, setComedyMovies] = useState()
   const [FamilyMovies, setFamilyMovies] = useState()
   const [CienceFictionMovies, setCienceFictionMovies] = useState()
-
   const [error, setError]= useState(false)
-  const [loaded, setLoaded]= useState(false)
+  const [refresh, setRefresh] = useState(false);
 
   const getData = () => {
     return Promise.all([getPopularMovies(), getTopMovies(), getAccionMovies(), getComedyMovies(), getFamilyMovies(),getCienceFictionMovies()])
@@ -53,60 +49,18 @@ const Home = ({navigation}) =>{
       setLoaded(true)
     })
   }, [])
-  /*useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const popularMoviesData = await getPopularMovies();
-        if (!Array.isArray(popularMoviesData)) {
-          console.error("Error: La respuesta de la API no es un array.");
-          return;
-        }
 
-        const moviesImagesArray = popularMoviesData.map(
-          (movie) => `https://image.tmdb.org/t/p/w600_and_h900_bestv2/${movie.poster_path}`
-        );
+  const refrescar = () => {
+    setRefresh(true);
 
-        setMoviesImages(moviesImagesArray);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-      }
-    };
+    setTimeout(() => {
+      setRefresh(false)
+      getData()
+    }, 2000)
+  }
 
-    fetchData();
-  }, []);
-*/
-
-/*USE EFFECTE PARA EL AUTOSCROLL
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    if (upcomingMovies.length > 0 && flatListRef.current) { // Added check for flatListRef.current
-      const nextIndex = (currentIndex + 1) % upcomingMovies.length;
-      setCurrentIndex(nextIndex);
-      flatListRef.current.scrollToOffset({
-        offset: nextIndex * width,
-        animated: true,
-      });
-    }
-  }, 3000);
-
-  return () => clearInterval(interval); // Added cleanup function
-}, [currentIndex, upcomingMovies, width]);
-
-CODIGO DE LA FLATLIST
- <FlatList
-        ref={flatListRef}
-        data={upcomingMovies}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <CardCarrusel navigation={navigation} item={item} />
-        )}
-        keyExtractor={item => item.id.toString()}
-      />*/
 return (
-    <ScrollView>
+    <ScrollView refreshControl={<RefreshControl onRefresh={refrescar} refreshing={refresh}/>}>
     <View style={styles.container}>
     <FlatList
         ref={flatListRef}

@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, ScrollView, Image, Dimensions, Text, View, TouchableOpacity, FlatList } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { StyleSheet, ScrollView, Image, Dimensions, Text, View, TouchableOpacity, FlatList, Pressable, RefreshControl } from "react-native";
 import { getMovie, castMovie } from "../services/Service";
 import PlayButton from '../components/PlayButton'
 import dateFormat from "dateformat";
 import MyList from "../components/MyList";
 import { useAuth } from '../context/AuthContext'
+import UploadTeaser from "../components/UploadTeaser";
+import { showMessage } from 'react-native-flash-message';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import CardActors from "../components/CardActors";
 
 const placeholderImage = require('../assets/images/placeholder.jpg')
@@ -18,25 +22,108 @@ const Detail = ({ route, navigation }) => {
     const [movieDetail, setMovieDatil] = useState();
     const [loaded, setLoaded] = useState(false);
     const [loadedCast, setLoadedCast] = useState(false);
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [fieldValue, setFielValue] = useState("")
+    const [exists, setExist] = useState(false);    
+    const [refresh, setRefresh] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const refreshbutton = () => {
+    setRefreshKey(prev => prev + 1);
+    };
 
 
-    useEffect(() => {
-        getMovie(movieId).then(movieData => {
-            setMovieDatil(movieData);
-            setLoaded(true)
-        })
-    }, [movieId])
+    const fetchMovieDetails = async () => {
+  try {
+    const movieData = await getMovie(movieId);
+    setMovieDatil(movieData);
+    setLoaded(true);
+  } catch (error) {
+    console.error("Error al obtener los detalles de la película:", error);
+  }
+};
 
-    useEffect(() => {
-        castMovie(movieId).then(castData => {
-            setcastMovies(castData);
-            setLoadedCast(true)
-        })
-    }, [movieId])
+const fetchCastAndTeaser = async () => {
+  try {
+    const castData = await castMovie(movieId);
+    setcastMovies(castData);
+    setLoadedCast(true);
+
+    const db = getFirestore();
+    const docRef = doc(db, "Teaser", movieId.toString());
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setExist(true);
+    } else {
+      setExist(false);
+    }
+  } catch (error) {
+    console.error("Error al obtener cast o teaser:", error);
+  }
+};
+
+   useEffect(() => {
+  fetchMovieDetails();
+}, [movieId]);
+
+useEffect(() => {
+  fetchCastAndTeaser();
+}, [movieId]);
+
+    const isValidMp4Url = (url) => {
+    const regex = /^https:\/\/.*\.mp4$/i;
+    return regex.test(url.trim());
+    };
+
+    const handleSave = async () => {
+      try{
+        if(isValidMp4Url(fieldValue)){
+            const db = getFirestore();
+        const docRef = doc(db, "Teaser", movieId.toString());
+        if (!exists) {
+            const datosf = {
+            Title: movieDetail.title,
+            Uri: fieldValue
+        }
+        await setDoc(docRef, datosf);
+        showMessage({
+                    message: 'Éxito',
+                    description: 'Teaser subido correctamente.',
+                    type: 'success',
+                  });
+        }else{
+            showMessage({
+                    message: 'Error',
+                    description: 'Teaser ya registrado.',
+                    type: 'danger',
+                  });
+        }
+        }
+        else{
+            showMessage({
+                    message: 'Error',
+                    description: 'URL no valida.',
+                    type: 'danger',
+                  });
+        }
+      }catch(e){
+        console.log("Error", e.message)
+
+      }finally{
+        setVisibleModal(false)
+      }
+    }
+
+    const refreshAll = useCallback(async () => {
+    setRefresh(true);
+    await Promise.all([fetchMovieDetails(), fetchCastAndTeaser(), refreshbutton()]);
+    setRefresh(false);
+  }, [movieId]);
 
     return (
         <React.Fragment>
             {loaded && (
+                <ScrollView refreshControl={<RefreshControl onRefresh={refreshAll} refreshing={refresh}/>}>
                 <View style={styles.container}>
                     <ScrollView>
                         <Image resizeMode='cover'
@@ -71,8 +158,13 @@ const Detail = ({ route, navigation }) => {
                             </View>
                             <View style={styles.container}>
                                 <View style={styles.PlayButton}>
-                                    <PlayButton navigation={navigation} title={movieDetail.title} id={movieId} />
+                                    <PlayButton navigation={navigation} title={movieDetail.title} id={movieId} refreshKey={refreshKey}/>
                                     <MyList user={user} id={movieId} />
+                                    {!exists && (
+                                         <Pressable onPress={()=>setVisibleModal(true)} style={styles.button}>
+                                                <Icon name="add-to-queue" size={60} color={'black'} />
+                                        </Pressable>
+                                    )}
                                 </View>
                                 <View style={styles.PlayButton}>
                                 </View>
@@ -96,7 +188,12 @@ const Detail = ({ route, navigation }) => {
                             )}
                         </View>
                     </ScrollView>
+                    <UploadTeaser visible={visibleModal} onCancel={()=> setVisibleModal(false)} movieId={movieId}
+                    onChangeText={setFielValue} 
+                    onSave={handleSave}
+                        />
                 </View>
+                </ScrollView>
             )}
         </React.Fragment>
     )
@@ -109,7 +206,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
         paddingBottom: 20,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        marginBottom: '3%'
     },
     containerDetails: {
         flex: 1,
@@ -202,7 +300,13 @@ const styles = StyleSheet.create({
         marginTop: '12%',
         marginLeft: '3%'
     },
-
+    button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 50,
+    width: 100,
+    height: 100,
+  },
     editButtonText: {
         fontSize: 14,
         fontWeight: 'bold',

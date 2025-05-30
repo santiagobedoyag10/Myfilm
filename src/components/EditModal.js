@@ -1,5 +1,7 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Dimensions } from "react-native";
+
+const { width, height } = Dimensions.get('window');
 
 const EditModal = ({visible, title, value, onChangeText, onSave, onCancel}) => {
     return(
@@ -37,18 +39,19 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        top: '-10%%',
-        width: '100%'
+        width: '100%',
+        paddingHorizontal: 20,
     },
     modalContent: {
         backgroundColor: '#fff',
-        width: '85%',
-        height: '25%',
+        width: width * 0.8,
+        height: height * 0.25,
         borderRadius: 10,
-        borderBlockColor: '#000',
+        borderColor: '#000',
         borderWidth: 1,
         padding: 20,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     modalTitle: {
         fontSize: 18,
@@ -64,18 +67,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 10,
         marginBottom: 20,
-        top: '10%'
+        marginTop: 10,
     },
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        top: '15%'
+        marginTop: 10,
     },
-
     modalButtonEstile: {
-        marginStart: 5,
-        marginEnd: 5,
         width: '45%',
         backgroundColor: '#dd2b2b',
         paddingVertical: 10,
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     }
-})
+});
+
 
 export default EditModal;

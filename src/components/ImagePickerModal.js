@@ -1,5 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Image, Dimensions } from "react-native";
+
+const height = Dimensions.get('screen').height;
+const width = Dimensions.get('screen').width;
 
 const ImagePickerModal = ({visible, imageUri, onChooseImage, onSave, onCancel}) => {
     return(
@@ -31,75 +34,72 @@ const ImagePickerModal = ({visible, imageUri, onChooseImage, onSave, onCancel}) 
 
 const styles = StyleSheet.create({
     modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        top: '-10%%',
-        width: '100%'
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      paddingTop: height * 0.05,
     },
     modalContent: {
-        backgroundColor: '#fff',
-        width: '85%',
-        height: '40%',
-        borderRadius: 10,
-        borderBlockColor: '#000',
-        borderWidth: 1,
-        padding: 15,
-        alignItems: 'center'
+      backgroundColor: '#fff',
+      width: width * 0.85,
+      height: height * 0.45,
+      borderRadius: 10,
+      borderColor: '#000',
+      borderWidth: 1,
+      padding: 15,
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#000',
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      color: '#000',
     },
     modalInput: {
-        width: '100%',
-        height: 40,
-        borderColor: '#000',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginBottom: 20,
-        top: '10%'
+      width: '100%',
+      height: 40,
+      borderColor: '#000',
+      borderWidth: 1,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      marginBottom: 20,
     },
     modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        top: '15%'
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+      height: height * 0.045,
+      marginTop: height * 0.03,
     },
-
     modalButtonsImage: {
-        flexDirection: 'row-reverse',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        width: '120%',
-        top: '5%'
-
+      flexDirection: 'row-reverse',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      width: width * 1.1,
+      marginTop: height * 0.01,
     },
     modalButtonEstile: {
-        marginStart: 5,
-        marginEnd: 5,
-        width: '45%',
-        backgroundColor: '#dd2b2b',
-        paddingVertical: 10,
-        borderRadius: 25,
+      marginHorizontal: 5,
+      width: '45%',
+      backgroundColor: '#dd2b2b',
+      paddingVertical: 10,
+      borderRadius: 25,
     },
     modalButtonText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: 'bold',
-        textAlign: 'center',
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: 'bold',
+      textAlign: 'center',
     },
-
     profileImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 100,
-        marginTop: 20,
-        marginBottom: 10,
-      },
+      width: width * 0.4,
+      height: width * 0.4,
+      borderRadius: width * 0.3 / 2,
+      marginTop: 20,
+      marginBottom: 10,
+    },
 })
 
 export default ImagePickerModal;

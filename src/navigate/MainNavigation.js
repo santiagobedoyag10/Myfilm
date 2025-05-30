@@ -12,7 +12,6 @@ import Register from "../screens/auth/Registrer";
 import FavoriteList from "../screens/FavoriteList";
 import Settings from "../screens/auth/Settings";
 import VideoPlayerComponent from "../components/VideoPlayerComponent";
-import Notification from "../screens/Notification";
 const Tab=createBottomTabNavigator();
 const Stack=createNativeStackNavigator();
 
@@ -32,8 +31,6 @@ const TabNavigator = () =>{
             iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Mi Lista") {
             iconName = focused ? "list" : "list-sharp";
-          } else if (route.name=== "Notificaciones"){
-            iconName = focused ? "notifications" : "notifications-outline"
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -46,7 +43,6 @@ const TabNavigator = () =>{
             <Tab.Screen name="Home" component={Home} options={{}}/>
             <Tab.Screen name="Buscar" component={Search} options={{}}/>
             <Tab.Screen name="Mi Lista" component={FavoriteList} options={{}}/>
-            <Tab.Screen name="Notificaciones" component={Notification} options={{}}/>
             <Tab.Screen name="Mi Cuenta" component={User} options={{}}/>
         </Tab.Navigator>
     )
