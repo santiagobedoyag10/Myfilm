@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "32095002969",
+    "firebase_url": "https://proyecto-myfiilm-default-rtdb.firebaseio.com",
+    "project_id": "proyecto-myfiilm",
+    "storage_bucket": "proyecto-myfiilm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32095002969:android:d98117033e07906cee2c48",
+        "android_client_info": {
+          "package_name": "com.myfilm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32095002969-kuk0gfuae5c9a91kd1doi96h58liesqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_MPbLsbZ83-BNjh_MkIrFXrG1_Kk0ags"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32095002969-kuk0gfuae5c9a91kd1doi96h58liesqq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32095002969-vctlobcsrpfaor2pro6es0c74h2d39fs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.myfilm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

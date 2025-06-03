@@ -54,7 +54,7 @@ La app está orientada a usuarios que buscan una plataforma intuitiva para acced
 ## 🚀 Instalación y ejecución
 
 ```bash
-git clone https://github.com/santiagobedoyag10/Myfim.git
+git clone https://github.com/santiagobedoyag10/Myfilm.git
 cd my-fillm
 npm install
 npx expo start
